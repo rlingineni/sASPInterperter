@@ -5,6 +5,7 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const app = express()
 const AWS = require('aws-sdk'); 
+const awsUtil = require('./awsHelper.js');
 
 AWS.config.update({
     accessKeyId: "AKIAJURJT6TKRTQZABTA",
@@ -28,10 +29,36 @@ app.get('/', (req, res) => {
   res.send('hello world')
 })
 
+app.post('/:project/create', (req, res) => {
+  const project = req.params.project
+
+  awsUtil.createProject(project, (err, data) => {
+    if (err) {
+      res.send("err");
+    } else {
+      res.send("good");
+    }
+  });
+});
+
+app.post('/:project/upload', (req, res) => {
+  const text = req.body.text;
+  const project = req.params.project
+
+  awsUtil.uploadFileWithPath(project, text, (err, data) => {
+    if (err) {
+      res.send("err");
+    } else {
+      res.send("good");
+    }
+  });
+});
+
 app.post('/:project/query', (req, res) => {
   const query = req.body.query;
+  const project = req.params.project
 
-  readFile(req.params.project, (err, data) => {
+  awsUtil.readFileWithPath(project, (err, data) => {
     if (err) throw err;
 
     data = data.Body.toString('ascii');
