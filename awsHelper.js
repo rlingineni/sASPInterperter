@@ -22,7 +22,14 @@ var s3 = new AWS.S3();
 
 createProject("sample");
 
-readFile();
+readFile(
+  (err, data) => {
+    if (err) {
+      console.log(err, err.stack); // an error occurred
+    } else {
+       console.log(data.Body.toString('ascii'));           // successful response
+    }   
+});
 
 var projName = "";
 
@@ -49,19 +56,8 @@ function createProject(projectName) {
 
 }
 
-function readFile() {
-
-var params = {Bucket: 'sasp', Key: projName+'/main.txt'};
-
- s3.getObject(params, function(err, data) {
-  if (err) {
-    console.log(err, err.stack); // an error occurred
-    return err;
-  } else {
-     console.log(data.Body.toString('ascii'));           // successful response
-     return data.Body.toString('ascii');
-  }   
-});
-
+function readFile(callback) {
+  var params = {Bucket: 'sasp', Key: projName+'/main.txt'};
+  s3.getObject(params, callback);
 }
 
