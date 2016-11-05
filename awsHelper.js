@@ -61,3 +61,8 @@ function readFile(callback) {
   s3.getObject(params, callback);
 }
 
+function readFileWithPath(project,callback) {
+  var params = {Bucket: 'sasp', Key: project+'/main.txt'};
+  s3.getObject(params, callback);
+}
+
