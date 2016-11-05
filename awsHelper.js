@@ -16,20 +16,20 @@ fs.readFile('template/family.lp', 'utf8', function (err,data) {
   templateFile = data;
 });
 
+function readFileCallback(err,data){ 
+  if (err) {
+      console.log(err, err.stack); // an error occurred
+      return err;
+    } else {
+       console.log(data.Body.toString('ascii'));           // successful response
+       return data.Body.toString('ascii');
+    }   
+}
 
 var s3 = new AWS.S3(); 
 
+//readFile(readFileCallback);
 
-createProject("sample");
-
-readFile(
-  (err, data) => {
-    if (err) {
-      console.log(err, err.stack); // an error occurred
-    } else {
-       console.log(data.Body.toString('ascii'));           // successful response
-    }   
-});
 
 var projName = "";
 
@@ -62,7 +62,16 @@ function readFile(callback) {
 }
 
 function readFileWithPath(project,callback) {
+  projName = project;
+
   var params = {Bucket: 'sasp', Key: project+'/main.txt'};
   s3.getObject(params, callback);
+}
+
+
+function uploadFile(modifiedText,callback) {
+   var params = {Bucket: 'sasp', Key: projName + '/main.txt', Body: modifiedText};
+  s3.putObject(params, callback);   
+
 }
 
