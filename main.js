@@ -7,18 +7,6 @@ const app = express()
 const AWS = require('aws-sdk'); 
 const awsUtil = require('./awsHelper.js');
 
-AWS.config.update({
-    accessKeyId: "AKIAJURJT6TKRTQZABTA",
-    secretAccessKey: "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"
-});
-
-const s3 = new AWS.S3(); 
-
-function readFile(project, callback) {
-  const params = {Bucket: 'sasp', Key: project + '/main.txt'};
-  s3.getObject(params, callback);
-}
-
 app.use(bodyParser.json());
 
 let commandify = (c) => `#compute 1 {${c}}.`
@@ -74,14 +62,14 @@ app.post('/:project/query', (req, res) => {
 
         sasp.stdout.on('data', (data) => {
           const strData = `${data}`;
-          const json = { "output": strData }
+          const json = { "output": strData, "success": (strData.indexOf("false.") === -1) }
           res.send(JSON.stringify(json));
           console.log(`stdout: ${data}`);
         });
 
         sasp.stderr.on('data', (data) => {
           const strData = `${data}`;
-          const json = { "output": strData }
+          const json = { "output": strData, "error": true }
           res.send(JSON.stringify(json));
           console.log(`stderr: ${data}`);
         });
