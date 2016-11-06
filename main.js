@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 let commandify = (c) => `#compute 1 {${c}}.`
 const answerSet = './family.lp';
 const querySet = './run.lp';
+let lasterr = '';
 
 app.get('/', (req, res) => {
   res.send('hello world')
@@ -70,12 +71,10 @@ app.post('/:project/query', (req, res) => {
         sasp.stderr.on('data', (data) => {
           const strData = `${data}`;
           const json = { "output": strData, "error": true }
-          res.send(JSON.stringify(json));
+          try {
+            res.send(JSON.stringify(json));
+          } catch (ignore) {}
           console.log(`stderr: ${data}`);
-        });
-
-        sasp.on('close', (code) => {
-          console.log(`child process exited with code ${code}`);
         });
 
     });
