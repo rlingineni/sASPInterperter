@@ -13,6 +13,7 @@ let commandify = (c) => `#compute 1 {${c}}.`
 const answerSet = './family.lp';
 const querySet = './run.lp';
 let lasterr = '';
+const regex = /\/Users\/benawad\/Documents\/programing\/hackathons\/hackai\/sASPInterperter\/run\.lp:[0-9]+:[0-9]+:/g;
 
 app.get('/', (req, res) => {
   res.send('hello world')
@@ -70,7 +71,9 @@ app.post('/:project/query', (req, res) => {
 
         sasp.stderr.on('data', (data) => {
           const strData = `${data}`;
-          const json = { "output": strData, "error": true }
+          const clean = strData.replace(regex, "");
+          const first = clean.split("ERROR")[1];
+          const json = { "output": "ERROR" + first, "error": true }
           try {
             res.send(JSON.stringify(json));
           } catch (ignore) {}
