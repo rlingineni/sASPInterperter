@@ -45,7 +45,7 @@ app.post('/:project/upload', (req, res) => {
 });
 
 app.post('/:project/query', (req, res) => {
-  const query = req.body.query;
+  const query = req.body.query.replace(".", "");
   const project = req.params.project
 
   awsUtil.readFileWithPath(project, (err, data) => {
